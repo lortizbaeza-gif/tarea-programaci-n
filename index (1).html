@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadística Pro | Herramienta Educativa</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --bg-light: #f8fafc;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            padding: 1.25rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            background: #ffffff;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.25rem 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-header i {
+            color: var(--secondary-color);
+            font-size: 1.25rem;
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background-color: #64748b;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: #f1f5f9;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: var(--secondary-color);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .chart-card-body {
+            padding: 1.5rem;
+            height: 450px;
+        }
+
+        .result-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.8;
+        }
+
+        #treeOutput {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            margin: 3rem 0 1.5rem 0;
+            position: relative;
+            padding-left: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        footer {
+            margin-top: 5rem;
+            padding: 3rem 0;
+            background-color: var(--primary-color);
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark mb-5">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="bi bi-graph-up-arrow text-info"></i>
+                Estadística Pro
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <!-- Entrada de Datos -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-input-cursor-text"></i>
+                        Entrada de Datos
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label for="dataInput" class="form-label fw-medium">Datos Numéricos</label>
+                            <textarea class="form-control" id="dataInput" rows="3"
+                                placeholder="Inserta aquí tus datos separados por comas (ejemplo: 24, 15, 30, 24, ...)"></textarea>
+                            <div class="form-text text-muted">Ingresa al menos 20 datos para resultados óptimos.</div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-3">
+                            <button class="btn btn-primary d-flex align-items-center gap-2" id="calculateBtn">
+                                <i class="bi bi-calculator"></i>
+                                Calcular Todo
+                            </button>
+                            <button class="btn btn-secondary d-flex align-items-center gap-2" id="randomDataBtn">
+                                <i class="bi bi-dice-5"></i>
+                                Generar Datos Aleatorios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Análisis Descriptivo</h2>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-lightning-charge"></i>
+                        Estadísticas Base
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="stat-item">
+                            <span class="stat-label">Media (x̄)</span>
+                            <span class="stat-value" id="val-media">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Mediana (Me)</span>
+                            <span class="stat-value" id="val-mediana">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Moda (Mo)</span>
+                            <span class="stat-value" id="val-moda">-</span>
+                        </div>
+                        <div class="stat-item" style="background: rgba(59, 130, 246, 0.1);">
+                            <span class="stat-label">Rango</span>
+                            <span class="stat-value" id="val-rango">-</span>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded text-center">
+                                    <div class="small text-muted mb-1">Mínimo</div>
+                                    <div class="fw-bold fs-5" id="val-min">-</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded text-center">
+                                    <div class="small text-muted mb-1">Máximo</div>
+                                    <div class="fw-bold fs-5" id="val-max">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-table"></i>
+                        Tabla de Distribución de Frecuencias
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Intervalo Clase</th>
+                                        <th class="text-center">fᵢ</th>
+                                        <th class="text-center">fᵣ</th>
+                                        <th class="text-center">Fᵢ</th>
+                                        <th class="text-center">Fᵣ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frequencyTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center p-5 text-muted italic">Calcula los datos para
+                                            ver la tabla</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Visualizaciones Dinámicas</h2>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-bar-chart"></i>
+                        Histograma & Polígono
+                    </div>
+                    <div class="card-body chart-card-body">
+                        <canvas id="histoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-graph-up"></i>
+                        Ojiva de Frecuencias
+                    </div>
+                    <div class="card-body chart-card-body">
+                        <canvas id="ojivaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-bar-chart-steps"></i>
+                        Análisis de Pareto
+                    </div>
+                    <div class="card-body chart-card-body">
+                        <canvas id="paretoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Probabilidad y Combinatoria</h2>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-intersect"></i>
+                        Operaciones de Conjuntos
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase text-muted">Conjunto A</label>
+                                <input type="text" id="setA" class="form-control" placeholder="1, 2, 3...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase text-muted">Conjunto B</label>
+                                <input type="text" id="setB" class="form-control" placeholder="3, 4, 5...">
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mb-4" id="calcSets">Analizar Relaciones</button>
+                        <div class="result-box" id="setResults">
+                            <span class="text-muted">Esperando datos de entrada...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-percent"></i>
+                        Modelos de Probabilidad
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3"><i
+                                    class="bi bi-circle-fill text-primary small me-2"></i>Probabilidad Simple</h6>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">Favorables</span>
+                                <input type="number" id="fav" class="form-control" placeholder="n">
+                                <span class="input-group-text bg-white">/</span>
+                                <input type="number" id="total" class="form-control" placeholder="N">
+                                <button class="btn btn-primary" id="calcSimpleProb">Calcular</button>
+                            </div>
+                            <div id="simpleProbRes" class="mt-2 fw-bold text-primary"></div>
+                        </div>
+                        <hr class="text-muted my-4">
+                        <div>
+                            <h6 class="fw-bold mb-3"><i class="bi bi-circle-fill text-success small me-2"></i>Regla
+                                Multiplicativa</h6>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text">P(A)</span>
+                                        <input type="number" id="pa" class="form-control" placeholder="0.5" step="0.01">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text">P(B|A)</span>
+                                        <input type="number" id="pba" class="form-control" placeholder="0.2"
+                                            step="0.01">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-success w-100 mt-3" id="calcMulProb">Obtener Intersección</button>
+                            <div id="mulProbRes" class="mt-2 fw-bold text-success text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-calculator"></i>
+                        Conteo (nPr / nCr)
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="row g-4 justify-content-center mb-4">
+                            <div class="col-5">
+                                <div class="fs-1 fw-bold text-secondary mb-1">n</div>
+                                <input type="number" id="nVal" class="form-control text-center fs-4"
+                                    style="height: 60px">
+                            </div>
+                            <div class="col-5">
+                                <div class="fs-1 fw-bold text-secondary mb-1">r</div>
+                                <input type="number" id="rVal" class="form-control text-center fs-4"
+                                    style="height: 60px">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 justify-content-center mb-4">
+                            <button class="btn btn-dark" id="calcPerm">Permutación</button>
+                            <button class="btn btn-warning text-white" id="calcComb">Combinación</button>
+                        </div>
+                        <div id="combPermRes"
+                            class="stat-value fs-2 p-3 bg-light rounded d-inline-block min-vw-50 mt-2">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="bi bi-tree"></i>
+                        Diagrama de Árbol
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Resultados del experimento</label>
+                            <div class="input-group">
+                                <input type="text" id="treeItems" class="form-control" placeholder="Ej: Éxito, Fracaso">
+                                <button class="btn btn-primary" id="genTree">Generar</button>
+                            </div>
+                            <div class="form-text mt-2">Introduce los eventos separados por coma para un árbol de 2
+                                niveles.</div>
+                        </div>
+                        <pre id="treeOutput">Esperando eventos...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center">
+        <div class="container">
+            <div class="fs-4 fw-bold text-white mb-2">Estadística Pro</div>
+            <p class="mb-4">Herramienta integral de análisis estadístico educativo</p>
+            <div class="text-muted small">
+                &copy; 2026. Diseñado para excelencia académica. <br>
+                Impulsado por Chart.js & Bootstrap 5
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Referencias a elementos
+        const dataInput = document.getElementById('dataInput');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const randomDataBtn = document.getElementById('randomDataBtn');
+
+        // Botón Aleatorio
+        randomDataBtn.addEventListener('click', () => {
+            let randoms = [];
+            for (let i = 0; i < 20; i++) { randoms.push(Math.floor(Math.random() * 100)); } dataInput.value = randoms.join(', ');
+        });
+
+        // Lógica Principal
+        let charts = {};
+
+        calculateBtn.addEventListener('click', () => {
+            const rawData = dataInput.value.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+
+            if (rawData.length < 2) { alert('Ingrese al menos 2 datos válidos.'); return; } const
+                sortedData = [...rawData].sort((a, b) => a - b);
+
+            // 1. Estadísticas Descriptivas
+            const sum = sortedData.reduce((a, b) => a + b, 0);
+            const media = sum / sortedData.length;
+
+            let mediana;
+            const mid = Math.floor(sortedData.length / 2);
+            if (sortedData.length % 2 === 0) {
+                mediana = (sortedData[mid - 1] + sortedData[mid]) / 2;
+            } else {
+                mediana = sortedData[mid];
+            }
+
+            const counts = {};
+            sortedData.forEach(d => counts[d] = (counts[d] || 0) + 1);
+            let maxFreq = 0;
+            let modas = [];
+            for (let key in counts) {
+                if (counts[key] > maxFreq) {
+                    maxFreq = counts[key];
+                    modas = [key];
+                } else if (counts[key] === maxFreq) {
+                    modas.push(key);
+                }
+            }
+            const modaStr = maxFreq > 1 ? modas.join(', ') : 'No hay moda';
+
+            const min = sortedData[0];
+            const max = sortedData[sortedData.length - 1];
+            const rango = max - min;
+
+            document.getElementById('val-media').textContent = media.toFixed(2);
+            document.getElementById('val-mediana').textContent = mediana.toFixed(2);
+            document.getElementById('val-moda').textContent = modaStr;
+            document.getElementById('val-min').textContent = min;
+            document.getElementById('val-max').textContent = max;
+            document.getElementById('val-rango').textContent = rango;
+
+            // 2. Tabla de Frecuencias (Intervalos)
+            const k = Math.ceil(1 + 3.322 * Math.log10(sortedData.length));
+            const a = Math.ceil(rango / k) || 1;
+
+            let intervals = [];
+            let currentMin = min;
+            for (let i = 0; i < k; i++) {
+                let limitSup = currentMin + a; intervals.push({
+                    min: currentMin, max:
+                        limitSup, freq: 0
+                }); currentMin = limitSup;
+            } sortedData.forEach(d => {
+                for (let i = 0; i < intervals.length; i++) {
+                    const inter = intervals[i]; if (d >= inter.min && d <
+                        inter.max) { inter.freq++; break; } else if (i === intervals.length - 1 && d <= inter.max) { //
+                            //Para el último intervalo incluimos el máximo 
+                            inter.freq++; break;
+                        }
+                }
+            }); const
+                tbody = document.getElementById('frequencyTableBody'); tbody.innerHTML = ''; let fa = 0; let
+                    totalN = sortedData.length; intervals.forEach(inter => {
+                        fa += inter.freq;
+                        let fr = inter.freq / totalN;
+                        let frAcu = fa / totalN;
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>[${inter.min.toFixed(1)} - ${inter.max.toFixed(1)})</td>
+                            <td class="text-center">${inter.freq}</td>
+                            <td class="text-center">${fr.toFixed(4)}</td>
+                            <td class="text-center">${fa}</td>
+                            <td class="text-center">${frAcu.toFixed(4)}</td>
+                            `;
+                        tbody.appendChild(tr);
+                    });
+
+            // 3. Gráficos
+            renderCharts(intervals, fa, totalN);
+        });
+
+        function renderCharts(intervals, totalFa, n) {
+            const labels = intervals.map(i => `[${i.min}-${i.max})`);
+            const freqs = intervals.map(i => i.freq);
+
+            let faProgressive = 0;
+            const dataAcu = intervals.map(i => {
+                faProgressive += i.freq;
+                return faProgressive;
+            });
+
+            // Histograma y Polígono
+            if (charts.histo) charts.histo.destroy();
+            charts.histo = new Chart(document.getElementById('histoChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Frecuencia Absoluta',
+                        data: freqs,
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }, {
+                        label: 'Polígono de Frecuencias',
+                        data: freqs,
+                        type: 'line',
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        pointBackgroundColor: '#f59e0b',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { position: 'top' } }
+                }
+            });
+
+            // Ojiva
+            if (charts.ojiva) charts.ojiva.destroy();
+            charts.ojiva = new Chart(document.getElementById('ojivaChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Frecuencia Acumulada (Fᵢ)',
+                        data: dataAcu,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { position: 'top' } }
+                }
+            });
+
+            // Pareto
+            const paretoData = [...intervals].sort((a, b) => b.freq - a.freq);
+            const pLabels = paretoData.map(i => `[${i.min}-${i.max})`);
+            const pFreqs = paretoData.map(i => i.freq);
+            let pAcu = 0;
+            const pPercents = paretoData.map(i => {
+                pAcu += i.freq;
+                return (pAcu / n) * 100;
+            });
+
+            if (charts.pareto) charts.pareto.destroy();
+            charts.pareto = new Chart(document.getElementById('paretoChart'), {
+                data: {
+                    labels: pLabels,
+                    datasets: [{
+                        type: 'bar',
+                        label: 'Frecuencia',
+                        data: pFreqs,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderRadius: 5
+                    }, {
+                        type: 'line',
+                        label: '% Acumulado',
+                        data: pPercents,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'transparent',
+                        yAxisID: 'y1',
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        y1: {
+                            position: 'right',
+                            max: 100,
+                            beginAtZero: true,
+                            title: { display: true, text: 'Porcentaje %' },
+                            grid: { display: false }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // --- Probabilidad y Combinatoria ---
+
+        // Conjuntos
+        document.getElementById('calcSets').addEventListener('click', () => {
+            const getSet = (id) => new Set(document.getElementById(id).value.split(',').map(s =>
+                s.trim()).filter(s => s));
+            const A = getSet('setA');
+            const B = getSet('setB');
+
+            const union = new Set([...A, ...B]);
+            const inter = new Set([...A].filter(x => B.has(x)));
+            const diffAB = new Set([...A].filter(x => !B.has(x)));
+
+            document.getElementById('setResults').innerHTML = `
+                            <div class="mb-2"><span class="badge bg-primary me-2">Unión (A ∪ B)</span>
+                                {${[...union].sort().join(', ')}}</div>
+                            <div class="mb-2"><span class="badge bg-success me-2">Intersección (A ∩ B)</span>
+                                {${inter.size > 0 ? [...inter].sort().join(', ') : '∅'}}</div>
+                            <div><span class="badge bg-info me-2">Diferencia (A - B)</span> {${diffAB.size > 0 ?
+                    [...diffAB].sort().join(', ') : '∅'}}</div>
+                            `;
+        });
+
+        // Probabilidad Simple
+        document.getElementById('calcSimpleProb').addEventListener('click', () => {
+            const fav = parseFloat(document.getElementById('fav').value);
+            const tot = parseFloat(document.getElementById('total').value);
+            if (!tot) return;
+            const res = (fav / tot);
+            document.getElementById('simpleProbRes').innerHTML = `<i class="bi bi-info-circle me-1"></i>
+                            P = ${res.toFixed(4)} (${(res * 100).toFixed(2)}%)`;
+        });
+
+        // Regla Multiplicativa
+        document.getElementById('calcMulProb').addEventListener('click', () => {
+            const pa = parseFloat(document.getElementById('pa').value);
+            const pba = parseFloat(document.getElementById('pba').value);
+            const res = pa * pba;
+            document.getElementById('mulProbRes').innerHTML = `<i class="bi bi-check-circle me-1"></i>
+                            P(A ∩ B) = ${res.toFixed(4)}`;
+        });
+
+        // Factorial
+        const fact = (n) => (n <= 1) ? 1 : n * fact(n - 1); // Permutación y Combinación
+        document.getElementById('calcPerm').addEventListener('click', () => {
+            const n = parseInt(document.getElementById('nVal').value);
+            const r = parseInt(document.getElementById('rVal').value);
+            if (n < r) return alert('n debe ser>= r');
+            const res = fact(n) / fact(n - r);
+            const out = document.getElementById('combPermRes');
+            out.innerText = `nPr = ${res.toLocaleString()}`;
+            out.style.color = "#3b82f6";
+        });
+
+        document.getElementById('calcComb').addEventListener('click', () => {
+            const n = parseInt(document.getElementById('nVal').value);
+            const r = parseInt(document.getElementById('rVal').value);
+            if (n < r) return alert('n debe ser>= r');
+            const res = fact(n) / (fact(r) * fact(n - r));
+            const out = document.getElementById('combPermRes');
+            out.innerText = `nCr = ${res.toLocaleString()}`;
+            out.style.color = "#f59e0b";
+        });
+
+        // Diagrama de Árbol
+        document.getElementById('genTree').addEventListener('click', () => {
+            const itemsStr = document.getElementById('treeItems').value;
+            const items = itemsStr.split(',').map(s => s.trim()).filter(s => s);
+            if (items.length === 0) return;
+
+            let output = "EXP. RAÍZ\n";
+            items.forEach((it1, i1) => {
+                const isLast1 = i1 === items.length - 1;
+                output += (isLast1 ? "└── " : "├── ") + it1 + "\n";
+                items.forEach((it2, i2) => {
+                    const prefix1 = isLast1 ? " " : "│ ";
+                    const isLast2 = i2 === items.length - 1;
+                    output += prefix1 + (isLast2 ? "└── " : "├── ") + it2 + "\n";
+                });
+            });
+            document.getElementById('treeOutput').innerText = output;
+        });
+    </script>
+</body>
+
+</html>
